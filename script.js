@@ -77,7 +77,7 @@ function smoothScroll() {
 
 // Skill Hover Effects
 function skillHoverEffects() {
-  const skills = document.querySelectorAll('.details-container article');
+  const skills = document.querySelectorAll('#experience .details-container article');
   skills.forEach(skill => {
     skill.addEventListener('mouseenter', function() {
       this.style.transform = 'scale(1.05)';
@@ -90,13 +90,16 @@ function skillHoverEffects() {
   });
 }
 
-// Project Hover Effects
+// Project Hover Effects (This will now apply to the .project-card)
 function projectHoverEffects() {
-  const projects = document.querySelectorAll('.details-container.color-container');
+  const projects = document.querySelectorAll('.project-card');
   projects.forEach(project => {
     project.addEventListener('mouseenter', function() {
-      this.style.transform = 'translateY(-10px)';
-      this.style.boxShadow = '0 10px 20px rgba(0,0,0,0.1)';
+      // Only apply hover effect if the card is NOT flipped
+      if (!this.classList.contains('is-flipped')) {
+        this.style.transform = 'translateY(-10px)';
+        this.style.boxShadow = '0 10px 20px rgba(0,0,0,0.1)';
+      }
     });
     project.addEventListener('mouseleave', function() {
       this.style.transform = 'translateY(0)';
@@ -105,13 +108,39 @@ function projectHoverEffects() {
   });
 }
 
+// --- NEW FUNCTION FOR FLIP CARD ---
+function initFlipCards() {
+  const cards = document.querySelectorAll('.project-card');
+
+  cards.forEach(card => {
+    card.addEventListener('click', function(e) {
+      // We check if the clicked element or its parent is a button or link
+      // If it is, we DON'T flip the card, and let the link/button do its job
+      if (e.target.tagName === 'A' || e.target.tagName === 'BUTTON' || e.target.closest('button')) {
+        return;
+      }
+      
+      // If the click was not on a button, toggle the flip class
+      this.classList.toggle('is-flipped');
+
+      // Reset hover effect when flipping
+      if (this.classList.contains('is-flipped')) {
+        this.style.transform = 'translateY(0)';
+        this.style.boxShadow = 'none';
+      }
+    });
+  });
+}
+// --- END OF NEW FUNCTION ---
+
 // Initialize all interactive features
 document.addEventListener('DOMContentLoaded', () => {
   initDarkMode();
   smoothScroll();
   skillHoverEffects();
   projectHoverEffects();
-  // fetchUniqueVisitors();
+  initFlipCards(); // <-- ADDED THIS
+  
   // Dark Mode Toggle Button (add to your HTML)
   const darkModeToggle = document.getElementById('dark-mode-toggle');
   if (darkModeToggle) {
